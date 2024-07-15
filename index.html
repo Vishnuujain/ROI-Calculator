@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skanjo ROI Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        input[type="number"] {
+            font-size: 1.1rem;
+            padding: 0.75rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="w-full max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl overflow-hidden shadow-lg">
+            <div class="bg-blue-500 text-white p-8">
+                <h1 class="text-3xl font-bold mb-2">Skanjo ROI Calculator</h1>
+                <p>Discover the potential of optimizing your recruitment process</p>
+            </div>
+
+            <div class="p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Input Data</h2>
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <label for="avgRevenue" class="block text-sm font-medium text-black">
+                                Average Revenue per Select (INR)
+                                <span class="tooltip ml-1">
+                                    <i class="fas fa-info-circle info-icon"></i>
+                                    <span class="tooltiptext">The average revenue generated per selected candidate.</span>
+                                </span>
+                            </label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">₹</span>
+                                </div>
+                                <input type="number" id="avgRevenue" class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <label for="initialCVScreening" class="block text-sm font-medium text-black">
+                                Initial CV Screening (Number of CVs)
+                                <span class="tooltip ml-1">
+                                    <i class="fas fa-info-circle info-icon"></i>
+                                    <span class="tooltiptext">The number of CVs initially screened in the recruitment process.</span>
+                                </span>
+                            </label>
+                            <input type="number" id="initialCVScreening" class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="0">
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <label for="telephonicScreening" class="block text-sm font-medium text-black">
+                                Telephonic Screening (Number of Candidates)
+                                <span class="tooltip ml-1">
+                                    <i class="fas fa-info-circle info-icon"></i>
+                                    <span class="tooltiptext">The number of candidates who undergo telephonic screening.</span>
+                                </span>
+                            </label>
+                            <input type="number" id="telephonicScreening" class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="mt-6 flex space-x-4">
+                        <button id="calculateBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                            Calculate
+                        </button>
+                        <button id="clearBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+                            Clear Form
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Key Insights</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="text-sm font-medium text-black">Current Time Spent</h3>
+                            <p id="currentTime" class="mt-1 text-lg font-semibold text-red-600">0 hours</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="text-sm font-medium text-black">Time Spent with Skanjo</h3>
+                            <p id="skanjoTime" class="mt-1 text-lg font-semibold text-green-600">0 hours</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="text-sm font-medium text-black">Additional Revenue</h3>
+                            <p id="additionalRevenue" class="mt-1 text-lg font-semibold text-green-600">₹0</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="text-sm font-medium text-black">Total Time Saved</h3>
+                            <p id="totalTimeSaved" class="mt-1 text-lg font-semibold text-green-600">0 hours</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg col-span-2">
+                            <h3 class="text-sm font-medium text-black">
+                                Efficiency Increase
+                                <span class="tooltip ml-1">
+                                    <i class="fas fa-info-circle info-icon"></i>
+                                    <span class="tooltiptext">
+                                        Formula: (Additional Revenue / Average Revenue per Select) * 100
+                                    </span>
+                                </span>
+                            </h3>
+                            <p id="efficiencyIncrease" class="mt-1 text-lg font-semibold text-green-600">0%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateROI(avgRevenue, initialCVScreening, telephonicScreening) {
+            const currentTime = (initialCVScreening * (40/60)) + (telephonicScreening * 8);
+            const skanjoTime = (initialCVScreening * (10/60)) + ((telephonicScreening * 0.8) * 8);
+            const additionalRevenue = ((currentTime - skanjoTime) / skanjoTime) * avgRevenue;
+            const totalTimeSaved = currentTime - skanjoTime;
+            const percentageIncrease = (additionalRevenue / avgRevenue) * 100;
+
+            return {
+                current_time: currentTime.toFixed(2),
+                skanjo_time: skanjoTime.toFixed(2),
+                additional_revenue: additionalRevenue.toFixed(2),
+                total_time_saved: totalTimeSaved.toFixed(2),
+                percentage_increase: percentageIncrease.toFixed(2)
+            };
+        }
+
+        function updateResults() {
+            const avgRevenue = parseFloat(document.getElementById('avgRevenue').value) || 0;
+            const initialCVScreening = parseFloat(document.getElementById('initialCVScreening').value) || 0;
+            const telephonicScreening = parseFloat(document.getElementById('telephonicScreening').value) || 0;
+
+            const results = calculateROI(avgRevenue, initialCVScreening, telephonicScreening);
+
+            document.getElementById('currentTime').textContent = `${results.current_time} hours`;
+            document.getElementById('skanjoTime').textContent = `${results.skanjo_time} hours`;
+            document.getElementById('additionalRevenue').textContent = `₹${results.additional_revenue}`;
+            document.getElementById('totalTimeSaved').textContent = `${results.total_time_saved} hours`;
+            document.getElementById('efficiencyIncrease').textContent = `${results.percentage_increase}%`;
+        }
+
+        document.getElementById('calculateBtn').addEventListener('click', updateResults);
+
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            document.getElementById('avgRevenue').value = '';
+            document.getElementById('initialCVScreening').value = '';
+            document.getElementById('telephonicScreening').value = '';
+            updateResults();
+        });
+
+        // Add event listeners for dynamic updates
+        ['avgRevenue', 'initialCVScreening', 'telephonicScreening'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateResults);
+        });
+    </script>
+</body>
+</html>
